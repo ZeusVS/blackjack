@@ -78,6 +78,24 @@ def deal(hand, total):
 
 # (Re)create the complete deck of cards
 def shuffle():
+    # First print shuffling on screen to show the player the deck is shuffled again
+    os.system('cls' if os.name == 'nt' else 'clear')
+    for i in range(4):
+        print()
+    print("            __                   ______    ______   __  __                      \n\
+           |  \                 /      \  /      \ |  \|  \                     \n\
+   _______ | $$____   __    __ |  $$$$$$\|  $$$$$$\| $$ \$$ _______    ______   \n\
+  /       \| $$    \ |  \  |  \| $$_  \$$| $$_  \$$| $$|  \|       \  /      \  \n\
+ |  $$$$$$$| $$$$$$$\| $$  | $$| $$ \    | $$ \    | $$| $$| $$$$$$$\|  $$$$$$\ \n\
+  \$$    \ | $$  | $$| $$  | $$| $$$$    | $$$$    | $$| $$| $$  | $$| $$  | $$ \n\
+  _\$$$$$$\| $$  | $$| $$__/ $$| $$      | $$      | $$| $$| $$  | $$| $$__| $$ \n\
+ |       $$| $$  | $$ \$$    $$| $$      | $$      | $$| $$| $$  | $$ \$$    $$ \n\
+  \$$$$$$$  \$$   \$$  \$$$$$$  \$$       \$$       \$$ \$$ \$$   \$$ _\$$$$$$$ \n\
+                                                                     |  \__| $$ \n\
+                                                                      \$$    $$ \n\
+                                                                       \$$$$$$  ")
+    time.sleep(2)
+    # 
     cards = []
     for i in ["♥", "♦", "♣", "♠"]:
         for j in range(10) :
@@ -194,28 +212,13 @@ while True:
 
     # If less than half cards remain, shuffle (recreate) entire card deck
     if len(cards) < 52 * decks / 2:
-        os.system('cls' if os.name == 'nt' else 'clear')
-        for i in range(4):
-            print()
-        print("            __                   ______    ______   __  __                      \n\
-           |  \                 /      \  /      \ |  \|  \                     \n\
-   _______ | $$____   __    __ |  $$$$$$\|  $$$$$$\| $$ \$$ _______    ______   \n\
-  /       \| $$    \ |  \  |  \| $$_  \$$| $$_  \$$| $$|  \|       \  /      \  \n\
- |  $$$$$$$| $$$$$$$\| $$  | $$| $$ \    | $$ \    | $$| $$| $$$$$$$\|  $$$$$$\ \n\
-  \$$    \ | $$  | $$| $$  | $$| $$$$    | $$$$    | $$| $$| $$  | $$| $$  | $$ \n\
-  _\$$$$$$\| $$  | $$| $$__/ $$| $$      | $$      | $$| $$| $$  | $$| $$__| $$ \n\
- |       $$| $$  | $$ \$$    $$| $$      | $$      | $$| $$| $$  | $$ \$$    $$ \n\
-  \$$$$$$$  \$$   \$$  \$$$$$$  \$$       \$$       \$$ \$$ \$$   \$$ _\$$$$$$$ \n\
-                                                                     |  \__| $$ \n\
-                                                                      \$$    $$ \n\
-                                                                       \$$$$$$  ")
-        time.sleep(3)
         cards = shuffle()
     
     # Start the game logic
     place_bet()
     show_game()
 
+    # Start every game with giving the player 2 cards and the dealer 1 card (Eropean blackjack no-hole-card)
     player_total = deal(player_hand, player_total)
     show_game()
 
@@ -255,6 +258,12 @@ while True:
             break
         elif move == 'H':
             player_total = deal(player_hand, player_total)
+            if player_total > 21:
+                for player_card in player_hand:
+                    if player_card.value == 11:
+                        player_total -= 10
+                        player_card.value = 1
+                        break
             show_game()
         
         if player_total > 21:
@@ -267,9 +276,15 @@ while True:
     while not player_bust:
         if dealer_total < 17:
             dealer_total = deal(dealer_hand, dealer_total)
+            if dealer_total > 21:
+                for dealer_card in dealer_hand:
+                    if dealer_card.value == 11:
+                        dealer_total -= 10
+                        dealer_card.value = 1
+                        break
             show_game()
         elif dealer_total > 21:
-            dealer_bust = True
+            dealer_bust = True       
             break
         else:
             break
